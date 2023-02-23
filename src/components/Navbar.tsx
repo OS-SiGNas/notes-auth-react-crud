@@ -15,6 +15,9 @@ export const Navbar = (): JSX.Element => {
         <Button color="primary">
           <Link to="/login">Login</Link>
         </Button>
+        <Button color="primary">
+          <Link to="/">Home</Link>
+        </Button>
       </Toolbar>
     </AppBar>
   );
