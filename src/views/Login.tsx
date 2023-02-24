@@ -1,11 +1,11 @@
 import { type FormEvent, type ChangeEvent, useContext, useState } from 'react';
-import { UserContext } from '../context/userContext';
+import { UserContext, type UserContextProps } from '../context/userContext';
 
 import { type LoginType } from '../entities/UserInterface';
 import { loginHandler } from '../services/authService';
 
 export const Login = (): JSX.Element => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext) as UserContextProps;
   const [login, setLogin] = useState<LoginType>({ username: '', password: '' });
   // const { user, dispatch } = useContext(UserContext);
 

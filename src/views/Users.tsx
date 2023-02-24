@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import { getAllUsers } from '../services/authService';
-import { UserContext } from '../context/userContext';
+import { UserContext, type UserContextProps } from '../context/userContext';
 
 import type { UserApi } from '../entities/UserInterface';
 
 export const Users = (): JSX.Element => {
-  const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext) as UserContextProps;
   const [users, setUsers] = useState<UserApi[] | null>(null);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export const Users = (): JSX.Element => {
 
   const usersMapped = users?.map(({ _id, name }): JSX.Element => {
     return (
-      <li>
+      <li key={_id}>
         {_id} : {name}
       </li>
     );
