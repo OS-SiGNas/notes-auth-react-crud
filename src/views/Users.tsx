@@ -9,12 +9,8 @@ export const Users = (): JSX.Element => {
   const [users, setUsers] = useState<UserApi[] | null>(null);
 
   useEffect(() => {
-    void (async () => {
-      if (user !== null) {
-        const res = await getAllUsers(user?.token);
-        if (res !== null) setUsers(res.data);
-      }
-    })();
+    if (user !== null) void getAllUsers(user.token, setUsers);
+    console.log('efecto');
   }, []);
 
   const usersMapped = users?.map(({ _id, name }): JSX.Element => {

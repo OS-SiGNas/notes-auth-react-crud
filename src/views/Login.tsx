@@ -1,4 +1,5 @@
 import { type FormEvent, type ChangeEvent, useContext, useState } from 'react';
+import { FetchContext, type FetchContextProps } from '../context/fetchContext';
 import { UserContext, type UserContextProps } from '../context/userContext';
 
 import { type LoginType } from '../entities/UserInterface';
@@ -6,15 +7,15 @@ import { loginHandler } from '../services/authService';
 
 export const Login = (): JSX.Element => {
   const { user, setUser } = useContext(UserContext) as UserContextProps;
+  const { setFetching } = useContext(FetchContext) as FetchContextProps;
   const [login, setLogin] = useState<LoginType>({ username: '', password: '' });
   // const { user, dispatch } = useContext(UserContext);
 
   // handlers
-  const handleLogin = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleLogin = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
+    void loginHandler(login, setUser, setFetching);
     // if (data) dispatch({ type: "login", payload: data });
-    const res = await loginHandler(login);
-    if (res !== null) setUser(res.data);
   };
 
   const handleInputChanche = (event: ChangeEvent<HTMLInputElement>): void => {
