@@ -3,7 +3,7 @@ import { FetchContext, type FetchContextProps } from '../context/fetchContext';
 import { UserContext, type UserContextProps } from '../context/userContext';
 
 import { type LoginType } from '../entities/UserInterface';
-import { loginHandler } from '../services/authService';
+import { loginHandler } from '../services/usersService';
 
 export const Login = (): JSX.Element => {
   const { user, setUser } = useContext(UserContext) as UserContextProps;
