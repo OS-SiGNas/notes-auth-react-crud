@@ -97,7 +97,7 @@ class NotesService {
   ): Promise<void> => {
     try {
       setFetching(true);
-      const res = await this.#req.get<NoteResponse>(`/notes/${noteId}`, token);
+      const res = await this.#req.del<NoteResponse>(`/notes/${noteId}`, token);
       if (res.status !== 200) throw new Error(res.statusMsg);
       setNote(res.data);
       setFetching(false);

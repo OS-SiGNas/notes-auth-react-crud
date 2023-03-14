@@ -13,10 +13,13 @@ export const Navbar = (): JSX.Element => {
           My New App
         </Typography>
         <Button color="primary">
-          <Link to="/login">Login</Link>
+          <Link to="/notes">Notes</Link>
         </Button>
         <Button color="primary">
           <Link to="/">Home</Link>
+        </Button>
+        <Button color="primary">
+          <Link to="/login">Login</Link>
         </Button>
       </Toolbar>
     </AppBar>
