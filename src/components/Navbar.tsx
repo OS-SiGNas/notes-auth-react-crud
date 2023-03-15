@@ -1,24 +1,28 @@
+import { Link } from 'react-router-dom';
+
 import { Button, AppBar, Toolbar, IconButton, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
 
 export const Navbar = (): JSX.Element => {
   return (
-    <AppBar position="fixed">
+    <AppBar position="sticky">
       <Toolbar>
         <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          My New App
+          MyNotes
         </Typography>
-        <Button color="primary">
+
+        <Button color="inherit" variant="contained">
           <Link to="/notes">Notes</Link>
         </Button>
-        <Button color="primary">
+
+        <Button color="inherit">
           <Link to="/">Home</Link>
         </Button>
-        <Button color="primary">
+
+        <Button color="inherit">
           <Link to="/login">Login</Link>
         </Button>
       </Toolbar>

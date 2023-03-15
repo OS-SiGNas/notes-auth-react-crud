@@ -1,13 +1,16 @@
-import { type FormEvent, type ChangeEvent, useContext, useState } from 'react';
-import { FetchContext, type FetchContextProps } from '../context/fetchContext';
-import { UserContext, type UserContextProps } from '../context/userContext';
-
-import { type LoginType } from '../entities/UserInterface';
+import { useContext, useState } from 'react';
+import { FetchContext } from '../context/fetchContext';
+import { UserContext } from '../context/userContext';
 import { loginHandler } from '../services/usersService';
 
+import type { FormEvent, ChangeEvent } from 'react';
+import type { FetchContextProps } from '../context/fetchContext';
+import type { UserContextProps } from '../context/userContext';
+import type { LoginType } from '../entities/UserInterfaces';
+
 export const Login = (): JSX.Element => {
-  const { user, setUser } = useContext(UserContext) as UserContextProps;
   const { setFetching } = useContext(FetchContext) as FetchContextProps;
+  const { user, setUser } = useContext(UserContext) as UserContextProps;
   const [login, setLogin] = useState<LoginType>({ username: '', password: '' });
   // const { user, dispatch } = useContext(UserContext);
 
@@ -35,7 +38,7 @@ export const Login = (): JSX.Element => {
         <input type="password" placeholder="password" name="password" onChange={handleInputChanche} />
         <button>Login</button>
       </form>
-      <pre>{user != null ? JSON.stringify(user.username, null, 2) : 'without user'}</pre>
+      <pre>{user !== null ? JSON.stringify(user.username) : 'without user'}</pre>
     </>
   );
 };

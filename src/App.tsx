@@ -11,19 +11,16 @@ import './App.css';
 
 export const App = (): JSX.Element => {
   return (
-    <>
-      <h1>APP</h1>
-      <FetchProvider>
-        <UserProvider>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route path="/login" element={<Login />} />
-              <Route path="/notes" element={<MyNotes />} />
-              <Route index path="/" element={<Home />} />
-            </Route>
-          </Routes>
-        </UserProvider>
-      </FetchProvider>
-    </>
+    <FetchProvider>
+      <UserProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/notes" element={<MyNotes />} />
+            <Route index path="/" element={<Home />} />
+          </Route>
+        </Routes>
+      </UserProvider>
+    </FetchProvider>
   );
 };
