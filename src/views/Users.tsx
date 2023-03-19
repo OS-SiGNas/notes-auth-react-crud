@@ -1,19 +1,18 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { getUsers } from '../services/usersService';
-import { UserContext, type UserContextProps } from '../context/userContext';
-import { FetchContext, type FetchContextProps } from '../context/fetchContext';
+import { useUserContext } from '../context/userContext';
+import { useFetchContext } from '../context/fetchContext';
 
 import type { UserApi } from '../entities/UserInterfaces';
 
 export const Users = (): JSX.Element => {
-  const { user } = useContext(UserContext) as UserContextProps;
-  const { setFetching } = useContext(FetchContext) as FetchContextProps;
+  const { user } = useUserContext();
+  const { setFetching } = useFetchContext();
   const [users, setUsers] = useState<UserApi[] | null>(null);
 
   useEffect(() => {
     if (user !== null) void getUsers(user.token, setUsers, setFetching);
-    console.log('efecto');
-  }, []);
+  }, [setFetching, user]);
 
   const usersMapped = users?.map(({ _id, name }): JSX.Element => {
     return (

@@ -1,24 +1,22 @@
-import { useContext, useState } from 'react';
-import { FetchContext } from '../context/fetchContext';
-import { UserContext } from '../context/userContext';
+import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { Button, FormControl, Input, Grid } from '@mui/material';
+import { useFetchContext } from '../context/fetchContext';
+import { useUserContext } from '../context/userContext';
 import { loginHandler } from '../services/usersService';
 
-import type { FormEvent, ChangeEvent } from 'react';
-import type { FetchContextProps } from '../context/fetchContext';
-import type { UserContextProps } from '../context/userContext';
+import type { ChangeEvent } from 'react';
 import type { LoginType } from '../entities/UserInterfaces';
 
 export const Login = (): JSX.Element => {
-  const { setFetching } = useContext(FetchContext) as FetchContextProps;
-  const { user, setUser } = useContext(UserContext) as UserContextProps;
+  const { setFetching } = useFetchContext();
+  const { user, setUser } = useUserContext();
   const [login, setLogin] = useState<LoginType>({ username: '', password: '' });
-  // const { user, dispatch } = useContext(UserContext);
 
   // handlers
-  const handleLogin = (event: FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
+  const handleLogin = (): void => {
+    // event.preventDefault();
     void loginHandler(login, setUser, setFetching);
-    // if (data) dispatch({ type: "login", payload: data });
   };
 
   const handleInputChanche = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -29,16 +27,30 @@ export const Login = (): JSX.Element => {
     });
   };
 
-  // Main Element
   return (
-    <>
-      <h1>Login Page</h1>
-      <form onSubmit={handleLogin}>
-        <input type="text" placeholder="username" name="username" onChange={handleInputChanche} />
-        <input type="password" placeholder="password" name="password" onChange={handleInputChanche} />
-        <button>Login</button>
-      </form>
-      <pre>{user !== null ? JSON.stringify(user.username) : 'without user'}</pre>
-    </>
+    <Grid container>
+      <Grid item xs={12} md={12}>
+        <FormControl>
+          <Input required fullWidth type="text" placeholder="username" name="username" onChange={handleInputChanche} />
+        </FormControl>
+      </Grid>
+      <Grid item xs={12} md={12}>
+        <FormControl>
+          <Input
+            required
+            fullWidth
+            type="password"
+            placeholder="password"
+            name="password"
+            onChange={handleInputChanche}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={12} md={12}>
+        <Button onClick={handleLogin}>Login</Button>
+      </Grid>
+
+      {user !== null ? <Navigate to="/notes" /> : null}
+    </Grid>
   );
 };
