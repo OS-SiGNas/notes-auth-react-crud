@@ -1,9 +1,9 @@
-import requests from './Fetch';
+import req from './Fetch';
 
-import type { Fetch } from './Fetch';
 import type { User, UserApi, LoginType } from '../entities/UserInterfaces';
-import type { FetchState } from '../context/fetchContext';
+import type { IsLoadingState } from '../context/isLoadingContext';
 import type { ApiResponse } from './types';
+
 interface AuthResponse extends ApiResponse {
   data: User;
 }
@@ -14,119 +14,127 @@ interface UserResponse extends ApiResponse {
   data: UserApi;
 }
 
-class UserService {
-  #req: Fetch;
-  constructor(requests: Fetch) {
-    this.#req = requests;
-  }
+class UsersService {
+  public checkLocalUser = async (setUser: (arg: User | null) => void): Promise<void> => {
+    const localUser = window.localStorage.getItem('user');
+    if (localUser === null) return;
+    const user: User = JSON.parse(localUser);
+    req.token = user.token;
+    const res = await req.get<Response>('/auth');
+    res.status === 204 ? setUser(user) : this.logOut(setUser);
+  };
 
   public loginHandler = async (
     body: LoginType,
     setUser: (arg: User | null) => void,
-    setFetching: (arg: FetchState) => void
+    setIsLoading: (arg: IsLoadingState) => void
   ): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.post<AuthResponse>('/auth', { body });
+      setIsLoading(true);
+      const res = await req.post<AuthResponse>('/auth', body);
       if (res.status === 200) {
-        setFetching(false);
+        setIsLoading(false);
         setUser(res.data);
         window.localStorage.setItem('user', JSON.stringify(res.data));
-      } else throw new Error(res.statusMsg);
+        req.token = res.data.token;
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
 
+  public logOut = (setUser: (arg: null) => void): void => {
+    setUser(null);
+    window.localStorage.removeItem('user');
+    req.token = '';
+  };
+
   public getUsers = async (
-    token: string,
     setUsers: (arg: UserApi[] | null) => void,
-    setFetching: (arg: FetchState) => void
+    setIsLoading: (arg: IsLoadingState) => void
   ): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.get<UsersResponse>('/users', token);
+      setIsLoading(true);
+      const res = await req.get<UsersResponse>('/users');
       if (res.status === 200) {
         setUsers(res.data);
-        setFetching(false);
-      } else throw new Error(res.statusMsg);
+        setIsLoading(false);
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
       setUsers(null);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
 
   public getUser = async (
-    token: string,
     userId: string,
     setUserCard: (arg: UserApi) => void,
-    setFetching: (arg: FetchState) => void
+    setIsLoading: (arg: IsLoadingState) => void
   ): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.get<UserResponse>(`/users/${userId}`, token);
+      setIsLoading(true);
+      const res = await req.get<UserResponse>(`/users/${userId}`);
       if (res.status === 200) {
         setUserCard(res.data);
-        setFetching(false);
-      } else throw new Error(res.statusMsg);
+        setIsLoading(false);
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
 
   public createUser = async (
-    token: string,
     body: UserApi,
     setUserCard: (arg: UserApi) => void,
-    setFetching: (arg: FetchState) => void
+    setIsLoading: (arg: IsLoadingState) => void
   ): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.post<UserResponse>('/users', { token, body });
+      setIsLoading(true);
+      const res = await req.post<UserResponse>('/users', body);
       if (res.status === 201) {
         setUserCard(res.data);
-        setFetching(false);
-      } else throw new Error(res.statusMsg);
+        setIsLoading(false);
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
 
   public updateUser = async (
-    token: string,
     body: UserApi,
     setUserCard: (arg: UserApi) => void,
-    setFetching: (arg: FetchState) => void
+    setIsLoading: (arg: IsLoadingState) => void
   ): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.put<UserResponse>('/users', { token, body });
+      setIsLoading(true);
+      const res = await req.put<UserResponse>('/users', body);
       if (res.status === 200) {
         setUserCard(res.data);
-        setFetching(false);
-      } else throw new Error(res.statusMsg);
+        setIsLoading(false);
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
 
-  public deleteUser = async (token: string, userId: string, setFetching: (arg: FetchState) => void): Promise<void> => {
+  public deleteUser = async (userId: string, setIsLoading: (arg: IsLoadingState) => void): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.del<UserResponse>(`/users/${userId}`, token);
-      if (res.status === 200) {
-        setFetching(false);
-      } else throw new Error(res.statusMsg);
+      setIsLoading(true);
+      const res = await req.del<UserResponse>(`/users/${userId}`);
+      if (res.status === 204) {
+        setIsLoading(false);
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
-} // end
+}
 
-export const { loginHandler, getUsers, getUser, createUser, updateUser, deleteUser } = new UserService(requests);
+export const { checkLocalUser, loginHandler, logOut, getUser, getUsers, createUser, updateUser, deleteUser } =
+  new UsersService();

@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-// Hook context
+import { logOut } from '../../../services/usersService';
 
 interface Props {
   setUser: (arg: null) => void;
@@ -10,8 +10,7 @@ export const LogoutButton = ({ setUser }: Props): JSX.Element => {
     <Button
       color="inherit"
       onClick={() => {
-        setUser(null);
-        window.localStorage.removeItem('user');
+        logOut(setUser);
       }}
     >
       Logout

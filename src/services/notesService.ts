@@ -1,8 +1,7 @@
-import requests from './Fetch';
+import req from './Fetch';
 // Types
-import type { Fetch } from './Fetch';
 import type { Note, NewNote } from '../entities/NoteInterfaces';
-import type { FetchState } from '../context/fetchContext';
+import type { IsLoadingState } from '../context/isLoadingContext';
 import type { ApiResponse } from './types';
 interface NotesResponse extends ApiResponse {
   data: Note[];
@@ -12,106 +11,99 @@ interface NoteResponse extends ApiResponse {
 }
 
 class NotesService {
-  #req: Fetch;
-  constructor(requests: Fetch) {
-    this.#req = requests;
-  }
-
   public getNotes = async (
-    token: string,
     setNotes: (arg: Note[]) => void,
-    setFetching: (arg: FetchState) => void
+    setIsLoading: (arg: IsLoadingState) => void
   ): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.get<NotesResponse>('/notes', token);
+      setIsLoading(true);
+      const res = await req.get<NotesResponse>('/notes');
       if (res.status === 200) {
         setNotes(res.data);
-        setFetching(false);
-      } else throw new Error(res.statusMsg);
+        setIsLoading(false);
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
 
   public getNote = async (
     noteId: string,
-    token: string,
     setNote: (arg: Note) => void,
-    setFetching: (arg: FetchState) => void
+    setIsLoading: (arg: IsLoadingState) => void
   ): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.get<NoteResponse>(`/notes/${noteId}`, token);
+      setIsLoading(true);
+      const res = await req.get<NoteResponse>(`/notes/${noteId}`);
       if (res.status === 200) {
         setNote(res.data);
-        setFetching(false);
-      } else throw new Error(res.statusMsg);
+        setIsLoading(false);
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
 
   public createNote = async (
-    token: string,
     body: NewNote,
-    setFetching: (arg: FetchState) => void,
+    setIsLoading: (arg: IsLoadingState) => void,
     notes: Note[],
     setNotes: (arg: Note[]) => void
   ): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.post<NoteResponse>('/notes', { token, body });
+      setIsLoading(true);
+      const res = await req.post<NoteResponse>('/notes', body);
       if (res.status === 201) {
-        setFetching(false);
+        setIsLoading(false);
         setNotes([...notes, res.data]);
-      } else throw new Error(res.statusMsg);
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
 
   public updateNote = async (
-    token: string,
-    body: Note,
-    setNote: (arg: Note) => void,
-    setFetching: (arg: FetchState) => void
+    noteId: string,
+    body: NewNote,
+    notes: Note[],
+    setNotes: (arg: Note[]) => void,
+    setIsLoading: (arg: IsLoadingState) => void
   ): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.put<NoteResponse>('/notes', { token, body });
+      setIsLoading(true);
+      const res = await req.put<NoteResponse>(`/notes/${noteId}`, body);
       if (res.status === 200) {
-        setNote(res.data);
-        setFetching(false);
-      } else throw new Error(res.statusMsg);
+        const newNotesArray = notes.filter((note) => note._id !== noteId);
+        setNotes([...newNotesArray, res.data]);
+        setIsLoading(false);
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
 
   public deleteNote = async (
     noteId: string,
-    token: string,
     notes: Note[],
     setNotes: (arg: Note[]) => void,
-    setFetching: (arg: FetchState) => void
+    setIsLoading: (arg: IsLoadingState) => void
   ): Promise<void> => {
     try {
-      setFetching(true);
-      const res = await this.#req.del<NoteResponse>(`/notes/${noteId}`, token);
-      if (res.status === 200) {
-        setFetching(false);
+      setIsLoading(true);
+      const res = await req.del<NoteResponse>(`/notes/${noteId}`);
+      if (res.status === 204) {
+        setIsLoading(false);
         setNotes(notes.filter((note) => note._id !== noteId));
-      } else throw new Error(res.statusMsg);
+      } else throw new Error(res.message);
     } catch (error) {
       console.info(error);
-      setFetching('error');
+      setIsLoading('error');
     }
   };
 } // end
 
-export const { getNotes, getNote, createNote, updateNote, deleteNote } = new NotesService(requests);
+export const { getNotes, getNote, createNote, updateNote, deleteNote } = new NotesService();

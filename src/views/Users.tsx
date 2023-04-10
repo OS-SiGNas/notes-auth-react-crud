@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
 import { getUsers } from '../services/usersService';
 import { useUserContext } from '../context/userContext';
-import { useFetchContext } from '../context/fetchContext';
+import { useIsLoadingContext } from '../context/isLoadingContext';
 
 import type { UserApi } from '../entities/UserInterfaces';
 
 export const Users = (): JSX.Element => {
   const { user } = useUserContext();
-  const { setFetching } = useFetchContext();
+  const { setIsLoading } = useIsLoadingContext();
   const [users, setUsers] = useState<UserApi[] | null>(null);
 
   useEffect(() => {
-    if (user !== null) void getUsers(user.token, setUsers, setFetching);
-  }, [setFetching, user]);
+    if (user !== null) void getUsers(setUsers, setIsLoading);
+  }, [setIsLoading, user]);
 
   const usersMapped = users?.map(({ _id, name }): JSX.Element => {
     return (

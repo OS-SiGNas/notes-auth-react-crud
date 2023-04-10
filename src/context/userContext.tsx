@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect } from 'react';
+import { checkLocalUser } from '../services/usersService';
 // Types
 import type { Dispatch, SetStateAction, ReactNode } from 'react';
 import type { User } from '../entities/UserInterfaces';
@@ -15,8 +16,7 @@ export const UserProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const localUser = window.localStorage.getItem('user');
-    if (localUser !== null) setUser(JSON.parse(localUser));
+    void checkLocalUser(setUser);
   }, []);
 
   return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;

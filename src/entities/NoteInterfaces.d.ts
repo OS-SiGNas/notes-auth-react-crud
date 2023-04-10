@@ -4,13 +4,13 @@ export interface Note {
   description: string;
   folder?: string;
   content: string;
-  createAt: Date;
+  createAt: string;
   authorId: string;
 }
 
 export interface NewNote {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   folder?: string;
-  content: string;
+  content?: string;
 }

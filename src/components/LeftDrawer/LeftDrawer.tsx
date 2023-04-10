@@ -17,7 +17,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 // styled
-import { drawerWidth, Main, DrawerHeader } from './styled/styledDrawer';
+import { drawerWidth, DrawerHeader } from './styled/styledDrawer';
 
 interface Props {
   open: boolean;

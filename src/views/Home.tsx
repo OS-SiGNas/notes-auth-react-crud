@@ -1,10 +1,11 @@
-import { Users } from './Users';
+import { Navigate } from 'react-router-dom';
+import { useUserContext } from '../context/userContext';
 
 export const Home = (): JSX.Element => {
-  return (
-    <>
-      <h1>Home page</h1>
-      <Users />
-    </>
-  );
+  const { user } = useUserContext();
+  if (user !== null) {
+    return <Navigate to="/notes" />;
+  } else {
+    return <Navigate to="/login" />;
+  }
 };
